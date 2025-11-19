@@ -16,7 +16,7 @@ def get_jobs(query):
         r.raise_for_status()
         data = r.json()
         items = data.get("data", [])
-        jobs = [f\"{it.get('job_title','')} at {it.get('employer_name','')}\" for it in items]
+        jobs = [f"{it.get('job_title','')} at {it.get('employer_name','')}" for it in items]
         return jobs[:8] if jobs else ["No jobs found for this query."]
     except Exception as e:
         return [f"Job API error: {e}"]
