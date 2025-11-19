@@ -1,6 +1,16 @@
-
+import spacy
+import subprocess
+import sys
 import fitz  # PyMuPDF
 
+def load_model():
+    try:
+        return spacy.load("en_core_web_sm")
+    except:
+        subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
+        return spacy.load("en_core_web_sm")
+
+nlp = load_model()
 COMMON_SKILLS = [
     'python','sql','pandas','numpy','scikit-learn','tensorflow','pytorch','nlp','machine learning',
     'aws','azure','gcp','docker','kubernetes','powerbi','tableau','excel','deep learning',
