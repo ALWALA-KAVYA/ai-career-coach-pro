@@ -22,7 +22,8 @@ def get_career_advice(prompt_text):
     try:
         resp = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt_text}],
-            model="mixtral-8x7b"
+            model="mixtral-8x7b-32768"
+
         )
         # parse common response structure
         try:
