@@ -2,20 +2,22 @@
 from googleapiclient.discovery import build
 import streamlit as st
 
-def get_youtube_courses(query, max_results=5):
-    api_key = st.secrets["api_keys"].get("YOUTUBE_API_KEY")
+def get_courses(query, max_results=5):
+    """
+    Fetch YouTube courses/videos for the given query.
+    Returns a list of dicts with title, video_url, and thumbnail.
+    """
+    api_key = st.secrets["YOUTUBE_API_KEY"]
     if not api_key:
-        return "YOUTUBE_API_KEY not set in Streamlit secrets."
+        return ["YOUTUBE_API_KEY not set in Streamlit secrets."]
 
     youtube = build("youtube", "v3", developerKey=api_key)
-
     request = youtube.search().list(
         q=query,
         part="snippet",
         maxResults=max_results,
         type="video"
     )
-
     response = request.execute()
 
     results = []

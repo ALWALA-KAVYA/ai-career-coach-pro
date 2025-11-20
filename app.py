@@ -2,21 +2,24 @@
 import streamlit as st
 from resume_parser import extract_text_from_pdf, extract_skills
 from job_recommender import get_jobs
-from course_recommender import get_youtube_courses as get_courses
+from course_recommender import get_courses
 from groq_api import get_career_advice
 
-st.set_page_config(page_title="AI Career Coach — Pro", layout="wide")
+st.set_page_config(page_title="💼 AI Career Coach — Pro", layout="wide")
 st.title("💼 AI Career Coach — Pro (Groq)")
 
 st.markdown(
-    "Upload your resume (PDF). The app extracts skills, generates AI career advice, recommends jobs and courses. "
-    "Set `GROQ_API_KEY` and `RAPIDAPI_KEY` as Streamlit secrets for full features."
+    "Upload your resume (PDF). The app extracts skills, generates AI career advice, "
+    "recommends jobs and courses. "
+    "Set `GROQ_API_KEY` and `YOUTUBE_API_KEY` as Streamlit secrets for full features."
 )
 
 with st.sidebar:
     st.header("About")
-    st.write("Pro demo: Groq + Streamlit")
-    st.write("Add keys in Settings → Secrets: GROQ_API_KEY, RAPIDAPI_KEY")
+    st.write("Pro demo: Groq + Streamlit + YouTube courses")
+    st.write("Add keys in Settings → Secrets: GROQ_API_KEY, YOUTUBE_API_KEY")
+    st.write("GitHub: [Your Repo Link]")
+    st.write("LinkedIn: [Your LinkedIn]")
 
 uploaded = st.file_uploader("Upload your Resume (PDF)", type=["pdf"])
 job_text = st.text_area("Optional: paste a Job Description or target job title here")
@@ -29,35 +32,53 @@ if uploaded:
             st.error(f"Failed to parse resume: {e}")
             resume_text = ""
 
-    st.subheader("📄 Resume (snippet)")
+    st.subheader("📄 Resume Snippet")
     st.code(resume_text[:1200] + ("..." if len(resume_text) > 1200 else ""))
 
     skills = extract_skills(resume_text)
-    st.subheader("🔎 Detected skills / keywords")
+    st.subheader("🔎 Detected Skills / Keywords")
     if skills:
-        st.write(", ".join(skills))
+        for skill in skills:
+            st.markdown(
+                f"<span style='background-color:#90ee90;padding:3px;border-radius:5px'>{skill}</span>",
+                unsafe_allow_html=True
+            )
     else:
-        st.write("No explicit skills detected. Try adding a short profile paragraph to the resume.")
+        st.write("No explicit skills detected. Add a short profile paragraph in the resume for better results.")
 
+    # Career Advice
     if st.button("🎯 Get AI Career Advice"):
-        with st.spinner("Calling Groq for personalized advice..."):
-            prompt = f"Analyze this resume and the job text (if provided). Provide:\\n1) Match score (0-100)\\n2) Missing or weak skills\\n3) Structured 30-day learning plan with free resources\\n4) Top 3 job roles to apply for and suggested next steps.\\n\\nResume:\\n{resume_text}\\n\\nJob:\\n{job_text}"
+        with st.spinner("Calling Groq API for personalized advice..."):
+            prompt = f"Analyze this resume and job text (if provided). Provide:\n" \
+                     f"1) Match score (0-100)\n2) Missing/weak skills\n3) 30-day learning plan with free resources\n" \
+                     f"4) Top 3 job roles to apply for\n\nResume:\n{resume_text}\n\nJob:\n{job_text}"
             advice = get_career_advice(prompt)
-        st.subheader("🧠 Career Advice (AI)")
-        st.write(advice)
+        with st.expander("🧠 Career Advice"):
+            st.write(advice)
 
+    # Job Recommendations
     if st.button("💼 Find Jobs (sample)"):
         st.subheader("💼 Job Recommendations")
         query = skills[0] if skills else (job_text or "Data Analyst")
         jobs = get_jobs(query)
-        for j in jobs:
-            st.write(f"- {j}")
+        cols = st.columns(2)
+        for idx, j in enumerate(jobs):
+            with cols[idx % 2]:
+                st.markdown(f"**{j}**")
 
+    # Course Recommendations
     if st.button("🎓 Recommend Courses"):
         st.subheader("🎓 Course Recommendations")
         query = skills[0] if skills else (job_text or "python")
         courses = get_courses(query)
-        for c in courses:
-            st.write(f"- {c}")
+        cols = st.columns(2)
+        for idx, c in enumerate(courses):
+            with cols[idx % 2]:
+                if isinstance(c, dict):
+                    st.image(c.get("thumbnail"), width=200)
+                    st.markdown(f"[{c.get('title')}]({c.get('video_url')})")
+                else:
+                    st.markdown(f"- {c}")
+
 else:
     st.info("Upload a PDF resume (sample included) to begin.")
