@@ -7,7 +7,7 @@ def get_courses(query, max_results=5):
     Fetch YouTube courses/videos for the given query.
     Returns a list of dicts with title, video_url, and thumbnail.
     """
-    api_key = st.secrets["YOUTUBE_API_KEY"]
+    api_key = st.secrets["api_keys"].get("YOUTUBE_API_KEY")
     if not api_key:
         return ["YOUTUBE_API_KEY not set in Streamlit secrets."]
 
