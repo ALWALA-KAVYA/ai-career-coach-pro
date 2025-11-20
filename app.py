@@ -6,7 +6,7 @@ from course_recommender import get_courses
 from groq_api import get_career_advice
 
 st.set_page_config(page_title="💼 AI Career Coach — Pro", layout="wide")
-st.title("💼 AI Career Coach — Pro🤖")
+st.title("💼 AI Career Coach — Pro 🤖")
 
 st.markdown(
     "Upload your resume (PDF). The app extracts skills, generates AI career advice, "
