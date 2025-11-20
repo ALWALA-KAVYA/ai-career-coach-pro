@@ -1,49 +1,29 @@
 
-import requests
+from googleapiclient.discovery import build
 import streamlit as st
 
-def get_courses(topic):
-    """
-    Fetch course recommendations using Udemy Course Scraper API (RapidAPI).
-    Uses RAPIDAPI_KEY stored in Streamlit Secrets.
-    """
-
-    # Get API key from Streamlit secrets
-    api_key = st.secrets["api_keys"].get("RAPIDAPI_KEY")
-
+def get_youtube_courses(query, max_results=5):
+    api_key = st.secrets["api_keys"].get("YOUTUBE_API_KEY")
     if not api_key:
-        return "RAPIDAPI_KEY not set. Add it in Streamlit secrets."
+        return "YOUTUBE_API_KEY not set in Streamlit secrets."
 
-    # Udemy Search API endpoint
-    url = "https://udemy-course-scrapper.p.rapidapi.com/search"
+    youtube = build("youtube", "v3", developerKey=api_key)
 
-    query_params = {"query": topic}
+    request = youtube.search().list(
+        q=query,
+        part="snippet",
+        maxResults=max_results,
+        type="video"
+    )
 
-    headers = {
-        "x-rapidapi-key": api_key,
-        "x-rapidapi-host": "udemy-course-scrapper.p.rapidapi.com"
-    }
+    response = request.execute()
 
-    try:
-        response = requests.get(url, headers=headers, params=query_params, timeout=10)
-        response.raise_for_status()
+    results = []
+    for item in response.get("items", []):
+        results.append({
+            "title": item["snippet"]["title"],
+            "video_url": f"https://www.youtube.com/watch?v={item['id']['videoId']}",
+            "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
+        })
 
-        data = response.json()
-
-        # Extract course list
-        if "results" in data and len(data["results"]) > 0:
-            courses = []
-            for item in data["results"][:6]:  # limit to 6 results
-                courses.append({
-                    "title": item.get("title", "No Title"),
-                    "url": item.get("url", "#"),
-                    "rating": item.get("rating", "N/A"),
-                    "price": item.get("price", "N/A")
-                })
-            return courses
-        else:
-            return []
-
-    except Exception as e:
-        return f"Course API error: {e}"
-
+    return results
