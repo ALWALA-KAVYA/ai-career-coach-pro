@@ -22,7 +22,8 @@ def get_career_advice(prompt_text):
     try:
         resp = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt_text}],
-            model="llama-3.1-70b-versatile"
+            model = "llama-3.3-70b-versatile"
+
 
 
         )
