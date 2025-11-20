@@ -1,12 +1,14 @@
 
 import os
+import streamlit as st
 try:
     from groq import Groq
 except Exception:
     Groq = None
 
 def _get_client():
-    key = os.getenv("GROQ_API_KEY") or (os.environ.get("STREAMLIT_SECRETS_GROQ_API_KEY") if "STREAMLIT_SECRETS_GROQ_API_KEY" in os.environ else None)
+    key = st.secrets["api_keys"]["GROQ_API_KEY"]
+
     if not key:
         return None
     if Groq is None:
