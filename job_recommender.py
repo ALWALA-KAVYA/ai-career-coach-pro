@@ -1,8 +1,9 @@
 
 import os, requests
+import streamlit as st
 
 def get_jobs(query):
-    rapid_key = os.getenv("RAPIDAPI_KEY")
+    rapid_key = st.secrets["api_keys"]["RAPIDAPI_KEY"]
     if not rapid_key:
         return ["RAPIDAPI_KEY not set. Add it to enable live job search (optional)."]
     url = "https://jsearch.p.rapidapi.com/search"
