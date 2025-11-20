@@ -11,15 +11,14 @@ st.title("💼 AI Career Coach — Pro (Groq)")
 st.markdown(
     "Upload your resume (PDF). The app extracts skills, generates AI career advice, "
     "recommends jobs and courses. "
-    "Set `GROQ_API_KEY` and `YOUTUBE_API_KEY` as Streamlit secrets for full features."
+    
 )
 
 with st.sidebar:
     st.header("About")
     st.write("Pro demo: Groq + Streamlit + YouTube courses")
-    st.write("Add keys in Settings → Secrets: GROQ_API_KEY, YOUTUBE_API_KEY")
-    st.write("GitHub: [Your Repo Link]")
-    st.write("LinkedIn: [Your LinkedIn]")
+    
+    st.write("GitHub: [https://github.com/ALWALA-KAVYA/ai-career-coach-pro]")
 
 uploaded = st.file_uploader("Upload your Resume (PDF)", type=["pdf"])
 job_text = st.text_area("Optional: paste a Job Description or target job title here")
