@@ -4,4 +4,5 @@ requests
 PyMuPDF
 groq
 reportlab
-spacy==3.7.1
+spacy
+
