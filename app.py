@@ -2,7 +2,7 @@
 import streamlit as st
 from resume_parser import extract_text_from_pdf, extract_skills
 from job_recommender import get_jobs
-from course_recommender import get_courses
+from course_recommender import get_youtube_courses as get_courses
 from groq_api import get_career_advice
 
 st.set_page_config(page_title="AI Career Coach — Pro", layout="wide")
